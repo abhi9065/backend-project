@@ -49,25 +49,28 @@ router.get("/movies/:title" , async (req,res) => {
 
 
 
-async function updateDataById(movieId , updateData){
-try {
-  const updateMovie = await Movie.findByIdAndUpdate(movieId , updateData,{new:true})
-  return updateMovie
-} catch (error) {
-  throw error
-}
-}
-
-router.post("/update/:movieId" , async (req,res) => {
+async function updateMovie(movieId, updatedData) {
   try {
-    const updateMovieData = await updateDataById(req.params.movieId , req.body)
-    res.json(updateMovieData)
-    console.log(req.params.movieId)
+    const updatedMovie = await Movie.findByIdAndUpdate(movieId, updatedData, { new: true });
+    return updatedMovie;
   } catch (error) {
-    res.status(404).json({error:"error hai"})
+    throw error;
   }
+}
 
-})
+router.post('/update/:movieId', async (req, res) => {
+  try {
+    const updatedMovie = await updateMovie(req.params.movieId, req.body);
+    if (updatedMovie) {
+      res.json(updatedMovie);
+    } else {
+      res.status(404).json({ error: 'Movie not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update movie' });
+  }
+});
+
 
 async function updateDataById(movieId){
   try {
