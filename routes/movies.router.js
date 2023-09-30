@@ -58,7 +58,7 @@ try {
 }
 }
 
-router.get("/update/:movieId" , async (req,res) => {
+router.post("/update/:movieId" , async (req,res) => {
   try {
     const updateMovieData = await updateDataById(req.params.movieId , req.body)
     res.json(updateMovieData)
