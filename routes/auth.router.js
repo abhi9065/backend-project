@@ -16,7 +16,6 @@ async function signup(userDetail){
  
 }
 
-
 router.post("/signup" , async (req,res)=>{
     try {
         const savedUser = await signup(req.body) 

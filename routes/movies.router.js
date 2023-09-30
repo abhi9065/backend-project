@@ -81,7 +81,7 @@ async function updateDataById(movieId){
   }
   }
   
-  router.post("/delete/:movieId" , async (req,res) => {
+  router.delete("/delete/:movieId" , async (req,res) => {
     try {
       const updateMovieData = await updateDataById(req.params.movieId)
       res.json(updateMovieData)
