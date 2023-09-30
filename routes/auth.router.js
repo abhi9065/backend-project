@@ -7,8 +7,8 @@ const authVerify = require("../middlewares/auth-verify.middleware")
 
 async function signup(userDetail){
     try {
-        const user = await new User(userDetail)
-        const newUser = user.save()
+        const user =  new User(userDetail)
+        const newUser = await user.save()
         return newUser 
     } catch (error) {
         throw error

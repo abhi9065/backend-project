@@ -8,7 +8,7 @@ const connectDB = require("./db/db.connection")
 
 
 const movies = require("./routes/movies.router")
-const users = require("./routes/users.router")
+const users = require("./routes/auth.router")
 const auth = require("./routes/users.router")
 
 const errorHandler = require("./middlewares/error-handler.middleware")
