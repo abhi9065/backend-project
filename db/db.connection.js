@@ -1,6 +1,8 @@
 require("dotenv").config();
 
 const mongoose = require('mongoose')
+const Movie = require("../models/movies")
+const movie_json = require("../movies.json")
 
 const connectDB = async(uri) => {
     await mongoose.connect(uri ,{

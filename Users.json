@@ -1,0 +1,23 @@
+[
+    {
+    "email": "ashubirtare.com",
+    "password": "password123",
+    "profilePictureUrl": "https://example.com/profile.jpg",
+    "username": "exampleuser",
+    "nickname": "Example Nick"
+},
+{
+    "email": "abhishekjain.com",
+    "password": "password123",
+    "profilePictureUrl": "https://example.com/profile.jpg",
+    "username": "exampleuser",
+    "nickname": "Example Nick"
+},
+{
+    "email": "rohitjain.com",
+    "password": "password123",
+    "profilePictureUrl": "https://example.com/profile.jpg",
+    "username": "exampleuser",
+    "nickname": "Example Nick"
+}
+]

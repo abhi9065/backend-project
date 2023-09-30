@@ -1,3 +1,4 @@
+
 const mongoose = require('mongoose');
 
 const movieSchema = new mongoose.Schema({
@@ -40,31 +41,25 @@ const movieSchema = new mongoose.Schema({
   awards: {
     type: String,
   },
-  posterUrl: {
-    type: String,
-  },
-  trailerUrl: {
-    type: String,
-  },
-  ratings: [{
-    type: Number,
-    min: 0,
-    max: 10,
-  }],
   reviews: [
     {
       user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
       },
-      text: String,
+      text: String, // Add a field for review text
     },
   ],
-
+  posterUrl: {
+    type: String,
+  },
+  trailerUrl: {
+    type: String,
+  },
 }, {
   timestamps: true,
 });
 
 const Movie = mongoose.model('Movie', movieSchema);
 
-module.exports = { Movie };
+module.exports = Movie;
