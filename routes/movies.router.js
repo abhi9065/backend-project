@@ -58,10 +58,11 @@ try {
 }
 }
 
-router.get("/movies/:movieId" , async (req,res) => {
+router.get("/update/:movieId" , async (req,res) => {
   try {
     const updateMovieData = await updateDataById(req.params.movieId , req.body)
     res.json(updateMovieData)
+    console.log(req.params.movieId)
   } catch (error) {
     res.status(404).json({error:"error hai"})
   }
@@ -77,7 +78,7 @@ async function updateDataById(movieId){
   }
   }
   
-  router.get("/movies/:movieId" , async (req,res) => {
+  router.get("delete/:movieId" , async (req,res) => {
     try {
       const updateMovieData = await updateDataById(req.params.movieId)
       res.json(updateMovieData)
