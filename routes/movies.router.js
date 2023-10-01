@@ -100,7 +100,7 @@ async function addRatingAndReview(movieId, userId, rating, reviewText) {
       const movie = await Movie.findById(movieId);
       console.log({ movie })
       if (movie) {
-        movie.ratings.push(rating);
+        movie.rating.push(rating);
   
         const review = {
           user: userId,
@@ -120,7 +120,7 @@ async function addRatingAndReview(movieId, userId, rating, reviewText) {
     }
   }
   
-  router.post('/movies/:movieId/rating', authVerify , async (req, res) => {
+  router.post('/movies/:movieId/reviews', authVerify , async (req, res) => {
     try {
       const movieId = req.params.movieId;
       const { userId, rating, review } = req.body;

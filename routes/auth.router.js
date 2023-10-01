@@ -1,4 +1,5 @@
 const express = require("express")
+const bcrypt = require("bcrypt")
 const router = express.Router()
 const Movie = require("../models/movies")
 const User = require("../models/users")
@@ -10,14 +11,15 @@ const authVerify = require("../middlewares/auth-verify.middleware")
 async function signup(userDetail){
   const emailUser = userDetail.email
   const password = userDetail.password
-  Console.log(password)
+
 
   const token = generateToken(emailUser)
   const userExists = await User.findOne({email : emailUser})
+  console.log(userExists)
 
   
   if (userExists) {
-    
+    console.log( "user already exists")
   } else {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -33,59 +35,86 @@ async function signup(userDetail){
     const user = new User(newUser)
     const savedUser = await user.save()
     console.log(savedUser)
-    return(savedUser , token)
+    return {savedUser , token}
 
   }
 };
    
+// signup({
+//   "email": "jhihinhjain.com",
+//   "password": "password1235",
+//   "profilePictureUrl": "https://example.com/profile.jpg4",
+//   "username": "exampleuser5",
+//   "nickname": "Example Nick4"
+// })
 
 router.post('/signup',  async (req, res) => {
-  const {savedUser , token} = req.body
+  const userDetail = req.body
 
   try {
-    const userDetail = await signup(savedUser,token)
-    res.status(201).json({success : "new user created" , userDetail })
+    const {savedUser,token} = await signup(userDetail)
+   
+    res.status(201).json({success : "new user created" , savedUser,token})
   } catch (error) {
-    res.status(404).json({error : "not found"})
+    res.status(404).json({error : "user already exist"})
   }
 });
 
 
+async function login(email,password){
+  const user = await User.findOne({email:email})
 
-
-async function login(email, password) {
-  try {
-    const user = await User.findOne({ email });
-    if (user && user.password === password) {
-      console.log("Logged in user:", user);
-      return user;
-    } else {
-      throw new Error("Invalid credentials");
+  if(user){
+    const comparePassword = await bcrypt.compare(password , user.password)
+    if(comparePassword){
+      return user
+    }else{
+      throw error
     }
-  } catch (error) {
-    throw error;
   }
 }
 
+router.post("/login" , async(req,res)=>{
+  // const {decodedId} = req.user
+ const {email , password} = req.body
+ try{
+ const user = await login(email,password)
+ res.status(201).json({msg : "detail" , userDetail:user})
+ }catch{
+  res.status(404).json({msg : "error"})
+ }
+})
 
-router.post('/login', authVerify , async (req, res) => {
-    const { username, password } = await login(req.body)
+
+
+// async function login(email, password) {
+//   const user = await User.findOne({ email : email });
+//   if(user){
+//   const comparePassword = await bcrypt.compare(password , user.password)
+
+//   if(comparePassword){
+//     return user
+//   }else{
+//     console.log("error")
+//   }
+//   } 
   
-    const user = User.find((user) => user.username === username)
+// }
+
+// router.post('/login', async (req, res) => {
+   
+//   const {email,password} = req.body
+    
+
+//   try {
+//     const user = await login(email,password)
+//     res.status(201).json({msg:"detail" , user})
+//   } catch (error) {
+//     res.json({error:"error"})
+//   }
+    
   
-  
-    try {
-      const passwordMatch = await bcrypt.compare(password, user.password)
-  
-      if (passwordMatch) {
-        res.json({ message: 'User Found'})
-      } else {
-        res.status(401).json({ message: 'Authentication failed 2' })
-      }
-    } catch (error) {
-      res.status(500).json({ message: 'Authentication failed 3' })
-    }
-  })
+// })
 
 
 // router.post('/login', authVerify, async (req, res) => {
