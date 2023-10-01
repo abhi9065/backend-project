@@ -95,42 +95,82 @@ async function updateDataById(movieId){
 
 
 
-async function addRatingAndReview(movieId, userId, rating, reviewText) {
-    try {
-      const movie = await Movie.findById(movieId);
-      console.log({ movie })
-      if (movie) {
-        movie.rating.push(rating);
+// async function addRatingAndReview(movieId, userId, rating, reviewText) {
+//     try {
+//       const movie = await Movie.findById(movieId);
+//       console.log({ movie })
+//       if (movie) {
+//         movie.rating.push(rating);
   
-        const review = {
-          user: userId,
-          text: reviewText,
-        };
-        movie.reviews.push(review);
+//         const review = {
+//           user: userId,
+//           text: reviewText,
+//         };
+//         movie.reviews.push(review);
   
-        await movie.save();
+//         await movie.save();
   
-        const updatedMovieWithReview = await Movie.findById(movieId).populate('reviews.user', 'username profilePictureUrl');
-        return updatedMovieWithReview;
-      } else {
-        throw new Error("Movie not found");
-      }
-    } catch (error) {
-      throw error;
+//         const updatedMovieWithReview = await Movie.findById(movieId).populate('reviews.user', 'username profilePictureUrl');
+//         return updatedMovieWithReview;
+//       } else {
+//         throw new Error("Movie not found");
+//       }
+//     } catch (error) {
+//       throw error;
+//     }
+//   }
+  
+//   router.post('/movies/:movieId/reviews',  async (req, res) => {
+//     try {
+//       const movieId = req.params.movieId;
+//       const { userId, rating, reviews } = req.body;
+  
+//       const updatedMovie = await addRatingAndReview(movieId,userId, rating, reviews);
+//       res.json(updatedMovie);
+//     } catch (error) {
+//       res.status(404).json({ error: 'Movie not found' });
+//     }
+//   });
+
+
+  
+async function addRatingAndReview(movieId,userId,reviewText ,rating){
+ try {
+  const movie = await Movie.findById(movieId)
+   if(movie){
+
+    // movie.reviews.ratings.push(rating)
+
+    const review = {
+      user : userId,
+      text : reviewText,
+      ratings : rating
     }
+    movie.reviews.push(review)
+    await movie.save()
+
+   const movieWithReview = await Movie.findById(movieId).populate('reviews.user','username profilePictureUrl') 
+    return(movieWithReview)
+  }else{
+    console.log("movie not found")
   }
-  
-  router.post('/movies/:movieId/reviews', authVerify , async (req, res) => {
-    try {
-      const movieId = req.params.movieId;
-      const { userId, rating, review } = req.body;
-  
-      const updatedMovie = await addRatingAndReview(movieId, userId, rating, review);
-      res.json(updatedMovie);
-    } catch (error) {
-      res.status(404).json({ error: 'Movie not found' });
-    }
-  });
+} catch (error) {
+  throw error
+}
+}
+
+router.post('/movies/:movieId/rating', async (req, res) => {
+  try {
+    const movieId = req.params.movieId;
+    const { userId,  review ,rating } = req.body;
+
+    const updatedMovie = await addRatingAndReview(movieId, userId, review  , rating);
+    res.json(updatedMovie);
+  } catch (error) {
+    res.status(404).json({ error: 'Movie not found' });
+  }
+});
+
 
 
   async function getMovieReviewsWithUserDetails(movieId) {

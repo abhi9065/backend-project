@@ -24,9 +24,9 @@ app.get('/', (req, res) => {
   });
   
 
-  app.use("/auth" , auth)
+  app.use("/auth",auth)
   app.use("/movies" , movies)
-  app.use("/user-details" , authVerify ,users)
+  app.use("/user-details" ,users)
 
   app.use( rountNotFound)
   app.use( errorHandler)

@@ -74,14 +74,14 @@ async function login(email,password){
   }
 }
 
-router.post("/login" , async(req,res)=>{
-  // const {decodedId} = req.user
+router.post('/login' , authVerify, async(req,res)=>{
+  const userId = req.user
  const {email , password} = req.body
- try{
+ if(userId === email){
  const user = await login(email,password)
- res.status(201).json({msg : "detail" , userDetail:user})
- }catch{
-  res.status(404).json({msg : "error"})
+ res.status(201).json({msg : "details" , userDetail:user})
+ }else{
+  res.status(404).json({msg : "user not found"})
  }
 })
 

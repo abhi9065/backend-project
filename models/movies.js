@@ -41,6 +41,7 @@ const movieSchema = new mongoose.Schema({
   awards: {
     type: String,
   },
+ 
   reviews: [
     {
       user: {
@@ -48,6 +49,11 @@ const movieSchema = new mongoose.Schema({
         ref: 'User',
       },
       text: String, // Add a field for review text
+      ratings : [{
+        type : Number,
+        min : 0 ,
+        max: 10
+      }]
     },
   ],
   posterUrl: {

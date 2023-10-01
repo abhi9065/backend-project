@@ -14,21 +14,26 @@ function verificationToken(token){
   
   
   function extractUserIdFromToken(decodedToken){
-      if(decodedToken && decodedToken.username){
-          return decodedToken.username
+      if(decodedToken && decodedToken.userId){
+          return decodedToken.userId
       }else{
         throw new Error('Invalid or missing user ID in token')
       }
   }
   
   
-  function authVerify(){
-      const token = req.params.authorization
+  function authVerify(req,res,next){
+      const token = req.headers.authorization
   
      try {
       const decoded = verificationToken(token)
       const  userId = extractUserIdFromToken(decoded)
+      
       req.user = userId
+      console.log(userId)
+      console.log(req.user)
+
+      
        return next()
      } catch (error) {
       return res.status(401).json({ message: "Unauthorised access, please add the token"})
