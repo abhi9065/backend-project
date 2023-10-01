@@ -39,12 +39,12 @@ async function signup(userDetail){
 };
    
 
-router.post('/signup', authVerify , async (req, res) => {
-  const newUserDetail = req.body
+router.post('/signup',  async (req, res) => {
+  const {savedUser , token} = req.body
 
   try {
-    const {savedUser , token} = await signup(newUserDetail)
-    res.status(201).json({sucess : "new user created" , savedUser , token })
+    const userDetail = await signup(savedUser,token)
+    res.status(201).json({success : "new user created" , userDetail })
   } catch (error) {
     res.status(404).json({error : "not found"})
   }
