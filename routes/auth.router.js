@@ -5,6 +5,8 @@ const User = require("../models/users")
 const generateToken = require("../utils/utils")
 const authVerify = require("../middlewares/auth-verify.middleware")
 
+
+
 async function signup(userDetail){
     try {
         const user =  new User(userDetail)
@@ -16,16 +18,26 @@ async function signup(userDetail){
  
 }
 
-router.post("/signup" , async (req,res)=>{
-    try {
-        const savedUser = await signup(req.body) 
-        const token = generateToken(savedUser._id)
-        res.json({user : savedUser , token , success: true , message:"sign up successfull"})
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({message:"failed to create user account"})
-    }
-})
+router.post('/signup', authVerify , async (req, res) => {
+  const { username, password } = await signup(req.body);
+
+
+  const userExists = User.some(user => user.username === username);
+
+  if (userExists) {
+    res.status(400).json({ message: 'Username already taken' });
+  } else {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    User.push({ username, password: hashedPassword });
+    const token = generateToken();
+    User.push({ username, password });
+    console.log({ User })
+    res.status(201).json({ message: 'Registration successful', token });
+  }
+});
+
+
 
 
 async function login(email, password) {
@@ -43,23 +55,44 @@ async function login(email, password) {
 }
 
 
-router.post('/login', authVerify, async (req, res) => {
 
-  try {
-    const {userId} = req.user
-    const { email, password } = req.body;
-
-    if(userId === email){
-      const user = await login(email, password);
-      res.json(user);
-    }else{
-      res.json({error:"logged again"})
+router.post('/login', authVerify , async (req, res) => {
+    const { username, password } = await login(req.body)
+  
+    const user = User.find((user) => user.username === username)
+  
+  
+    try {
+      const passwordMatch = await bcrypt.compare(password, user.password)
+  
+      if (passwordMatch) {
+        res.json({ message: 'User Found'})
+      } else {
+        res.status(401).json({ message: 'Authentication failed 2' })
+      }
+    } catch (error) {
+      res.status(500).json({ message: 'Authentication failed 3' })
     }
+  })
 
-  } catch (error) {
-    res.status(401).json({ error: 'Invalid credentials' });
-  }
-});
+
+// router.post('/login', authVerify, async (req, res) => {
+
+//   try {
+//     const {userId} = req.user
+//     const { email, password } = req.body;
+
+//     if(userId === email){
+//       const user = await login(email, password);
+//       res.json(user);
+//     }else{
+//       res.json({error:"logged again"})
+//     }
+
+//   } catch (error) {
+//     res.status(401).json({ error: 'Invalid credentials' });
+//   }
+// });
 
 
 module.exports = router
