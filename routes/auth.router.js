@@ -1,53 +1,55 @@
 const express = require("express")
 const router = express.Router()
 const Movie = require("../models/movies")
-const Users = require("../models/users")
+const User = require("../models/users")
 const generateToken = require("../utils/utils")
 const authVerify = require("../middlewares/auth-verify.middleware")
 
 
 
+async function signup(userDetail){
+  const emailUser = userDetail.email
+  const password = userDetail.password
+  Console.log(password)
 
+  const token = generateToken(emailUser)
+  const userExists = await User.findOne({email : emailUser})
 
-// router.post('/signup', authVerify , async (req, res) => {
-//   const { username, password } = req.body;
-
-
-//   const userExists = Users.some(user => user.username === username);
-
-//   if (userExists) {
-//     res.status(400).json({ message: 'Username already taken' });
-//   } else {
-//     const salt = await bcrypt.genSalt(10);
-//     const hashedPassword = await bcrypt.hash(password, salt);
-//     Users.push({ username, password: hashedPassword });
-//     const token = generateToken();
-//     Users.push({ username, password });
-//     console.log({ User })
-//     res.status(201).json({ message: 'Registration successful', token });
-//   }
-// });
-
-
-
- router.post("/signup" , async(req,res)=>{
-     const {username , password} = req.body
-
-     const existsuser = Users.some(user => user.username === username )
-
-     if(existsuser){
-         res.json({msg : "user already exists"})
-     }else{
-         const salt = await bcrypt.genSalt(10)
-         const hashedPassword = await bcrypt.hash(password,salt)
-         Users.push({username,password : hashedPassword})
-        console.log(Users)
-        const token = generateToken();
-        res.status(202).json({msg:"registration sucesfull" , token})
+  
+  if (userExists) {
+    
+  } else {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    
+    const newUser ={
+      email : userDetail.email,
+      password : hashedPassword , 
+      profilepictureUrl: userDetail.profilepictureUrl,
+      username : userDetail.username,
+      nickname : userDetail.nickname 
     }
 
+    const user = new User(newUser)
+    const savedUser = await user.save()
+    console.log(savedUser)
+    return(savedUser , token)
 
- })
+  }
+};
+   
+
+router.post('/signup', authVerify , async (req, res) => {
+  const newUserDetail = req.body
+
+  try {
+    const {savedUser , token} = await signup(newUserDetail)
+    res.status(201).json({sucess : "new user created" , savedUser , token })
+  } catch (error) {
+    res.status(404).json({error : "not found"})
+  }
+});
+
 
 
 
@@ -64,7 +66,6 @@ async function login(email, password) {
     throw error;
   }
 }
-
 
 
 router.post('/login', authVerify , async (req, res) => {
