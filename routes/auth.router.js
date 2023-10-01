@@ -7,19 +7,10 @@ const authVerify = require("../middlewares/auth-verify.middleware")
 
 
 
-async function signup(userDetail){
-    try {
-        const user =  new User(userDetail)
-        const newUser = await user.save()
-        return newUser 
-    } catch (error) {
-        throw error
-    }
- 
-}
+
 
 router.post('/signup', authVerify , async (req, res) => {
-  const { username, password } = await signup(req.body);
+  const { username, password } = req.body;
 
 
   const userExists = User.some(user => user.username === username);
