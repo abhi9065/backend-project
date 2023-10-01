@@ -30,7 +30,7 @@ const authVerify = require("../middlewares/auth-verify.middleware")
 
 
 
- app.post("/signup" , async(req,res)=>{
+ router.post("/signup" , async(req,res)=>{
      const {username , password} = req.body
 
      const existsuser = Users.some(user => user.username === username )
@@ -41,7 +41,7 @@ const authVerify = require("../middlewares/auth-verify.middleware")
          const salt = await bcrypt.genSalt(10)
          const hashedPassword = await bcrypt.hash(password,salt)
          Users.push({username,password : hashedPassword})
-        console.log(users)
+        console.log(Users)
         const token = generateToken();
         res.status(202).json({msg:"registration sucesfull" , token})
     }
