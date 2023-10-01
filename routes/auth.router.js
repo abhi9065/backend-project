@@ -1,7 +1,7 @@
 const express = require("express")
 const router = express.Router()
 const Movie = require("../models/movies")
-const User = require("../models/users")
+const Users = require("../models/users")
 const generateToken = require("../utils/utils")
 const authVerify = require("../middlewares/auth-verify.middleware")
 
@@ -9,25 +9,45 @@ const authVerify = require("../middlewares/auth-verify.middleware")
 
 
 
-router.post('/signup', authVerify , async (req, res) => {
-  const { username, password } = req.body;
+// router.post('/signup', authVerify , async (req, res) => {
+//   const { username, password } = req.body;
 
 
-  const userExists = User.some(user => user.username === username);
+//   const userExists = Users.some(user => user.username === username);
 
-  if (userExists) {
-    res.status(400).json({ message: 'Username already taken' });
-  } else {
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-    User.push({ username, password: hashedPassword });
-    const token = generateToken();
-    User.push({ username, password });
-    console.log({ User })
-    res.status(201).json({ message: 'Registration successful', token });
-  }
-});
+//   if (userExists) {
+//     res.status(400).json({ message: 'Username already taken' });
+//   } else {
+//     const salt = await bcrypt.genSalt(10);
+//     const hashedPassword = await bcrypt.hash(password, salt);
+//     Users.push({ username, password: hashedPassword });
+//     const token = generateToken();
+//     Users.push({ username, password });
+//     console.log({ User })
+//     res.status(201).json({ message: 'Registration successful', token });
+//   }
+// });
 
+
+
+ app.post("/signup" , async(req,res)=>{
+     const {username , password} = req.body
+
+     const existsuser = Users.some(user => user.username === username )
+
+     if(existsuser){
+         res.json({msg : "user already exists"})
+     }else{
+         const salt = await bcrypt.genSalt(10)
+         const hashedPassword = await bcrypt.hash(password,salt)
+         Users.push({username,password : hashedPassword})
+        console.log(users)
+        const token = generateToken();
+        res.status(202).json({msg:"registration sucesfull" , token})
+    }
+
+
+ })
 
 
 
